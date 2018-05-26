@@ -859,6 +859,11 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 0, 1, 2, 4, 5, 6 }));
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
+    // set up the training score file
+    char filename[] = "Results/StateResult.csv";
+    std::fstream scoreFile;
+    scoreFile.open(filename, std::ios::out);
+
 	// restore the model from file
 	tdl.load("");
 
@@ -887,7 +892,7 @@ int main(int argc, const char* argv[]) {
 			}
 		}
 		debug << "end episode" << std::endl;
-
+        scoreFile << n << "," << score << std::endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
@@ -896,6 +901,6 @@ int main(int argc, const char* argv[]) {
 
 	// store the model into file
 	tdl.save("");
-
+    scoreFile.close();  
 	return 0;
 }
