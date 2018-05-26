@@ -863,8 +863,8 @@ int main(int argc, const char* argv[]) {
 	tdl.load("");
 
     // set up the training score file
-    char[] filename = "AfterStateScore.csv";
-    fstream scoreFile;
+    char filename[] = "AfterStateScore.csv";
+    std::fstream scoreFile;
     scoreFile.open(filename, ios::out);
 
 	// train the model
