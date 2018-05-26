@@ -892,7 +892,7 @@ int main(int argc, const char* argv[]) {
 			}
 		}
 		debug << "end episode" << std::endl;
-        scoreFile << n << "," << score << endl;
+        scoreFile << n << "," << score << std::endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
