@@ -865,7 +865,7 @@ int main(int argc, const char* argv[]) {
     // set up the training score file
     char filename[] = "AfterStateScore.csv";
     std::fstream scoreFile;
-    scoreFile.open(filename, ios::out);
+    scoreFile.open(filename, std::ios::out);
 
 	// train the model
 	std::vector<state> path;
