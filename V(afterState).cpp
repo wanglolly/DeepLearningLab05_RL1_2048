@@ -845,7 +845,7 @@ int main(int argc, const char* argv[]) {
 
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 100000;
+	size_t total = 10000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
@@ -861,6 +861,11 @@ int main(int argc, const char* argv[]) {
 
 	// restore the model from file
 	tdl.load("");
+
+    // set up the training score file
+    char[] filename = "AfterStateScore.csv";
+    fstream scoreFile;
+    scoreFile.open(filename, ios::out);
 
 	// train the model
 	std::vector<state> path;
@@ -887,7 +892,7 @@ int main(int argc, const char* argv[]) {
 			}
 		}
 		debug << "end episode" << std::endl;
-
+        scoreFile << n << "," << score << endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
@@ -896,6 +901,6 @@ int main(int argc, const char* argv[]) {
 
 	// store the model into file
 	tdl.save("");
-
+    scoreFile.close();
 	return 0;
 }
