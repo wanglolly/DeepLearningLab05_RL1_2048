@@ -747,7 +747,7 @@ public:
 	 *  '93.7%': 93.7% (937 games) reached 8192-tiles in last 1000 games (a.k.a. win rate of 8192-tile)
 	 *  '22.4%': 22.4% (224 games) terminated with 8192-tiles (the largest) in last 1000 games
 	 */
-	void make_statistic(size_t n, const board& b, int score, int unit = 1000) {
+	void make_statistic(size_t n, const board& b, int score, fstream fp, int unit = 1000) {
 		scores.push_back(score);
 		maxtile.push_back(0);
 		for (int i = 0; i < 16; i++) {
@@ -771,12 +771,18 @@ public:
 			info << "\t" "mean = " << mean;
 			info << "\t" "max = " << max;
 			info << std::endl;
+			fp << n;
 			for (int t = 1, c = 0; c < unit; c += stat[t++]) {
 				if (stat[t] == 0) continue;
 				int accu = std::accumulate(stat + t, stat + 16, 0);
 				info << "\t" << ((1 << t) & -2u) << "\t" << (accu * coef) << "%";
 				info << "\t(" << (stat[t] * coef) << "%)" << std::endl;
+				//Record the percentage if the score is above 2048
+				if(((1 << t) & -2u) >= 2048){
+					fp << "," << ((1 << t) & -2u) << "," << (stat[t] * coef);
+				}
 			}
+			fp << std::endl;
 			scores.clear();
 			maxtile.clear();
 		}
@@ -845,7 +851,7 @@ int main(int argc, const char* argv[]) {
 
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 100000;
+	size_t total = 10000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
@@ -863,9 +869,14 @@ int main(int argc, const char* argv[]) {
 	tdl.load("");
 
     // set up the training score file
-    char filename[] = "Results/AfterStateResult.csv";
+    char filename[] = "Results/AfterStateScore.csv";
     std::fstream scoreFile;
     scoreFile.open(filename, std::ios::out);
+
+	// set up the training 2048(and above) percentage
+	char perfilename[] = "Results/AfterStatePercentage.csv"
+	std::fstream perFile;
+    perFile.open(perfilename, std::ios::out);
 
 	// train the model
 	std::vector<state> path;
@@ -895,7 +906,7 @@ int main(int argc, const char* argv[]) {
         scoreFile << n << "," << score << std::endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
-		tdl.make_statistic(n, b, score);
+		tdl.make_statistic(n, b, score, perFile);
 		path.clear();
 	}
 
