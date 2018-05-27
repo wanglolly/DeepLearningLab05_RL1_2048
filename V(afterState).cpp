@@ -911,7 +911,7 @@ int main(int argc, const char* argv[]) {
 	}
 
 	// store the model into file
-	tdl.save("");
+	tdl.save("Models/AfterStateModel.tar");
     scoreFile.close();
 	perFile.close();
 	return 0;
