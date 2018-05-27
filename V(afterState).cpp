@@ -860,7 +860,7 @@ int main(int argc, const char* argv[]) {
 
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 2000;
+	size_t total = 500000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
@@ -910,6 +910,8 @@ int main(int argc, const char* argv[]) {
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
 		path.clear();
+
+		if(n % 100000 == 0) alpha = alpha * 0.5;
 	}
 
 	// store the model into file
