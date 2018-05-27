@@ -38,6 +38,9 @@ std::ostream& debug = *(new std::ofstream);
 // set up the training 2048(and above) percentage
 char perfilename[] = "Results/AfterStatePercentage.csv";
 std::fstream perFile;
+// set up the training score file
+char filename[] = "Results/AfterStateScore.csv";
+std::fstream scoreFile;
 
 /**
  * 64-bit bitboard implementation for 2048
@@ -726,6 +729,7 @@ public:
 		float exact = 0;
 		for (path.pop_back() /* terminal state */; path.size(); path.pop_back()) {
 			state& move = path.back();
+			//exact: V(s'next), move.reward(): rnext, move.value(): V(s')
 			float error = exact - (move.value() - move.reward());
 			debug << "update error = " << error << " for after state" << std::endl << move.after_state();
 			exact = move.reward() + update(move.after_state(), alpha * error);
@@ -787,6 +791,7 @@ public:
 				}
 			}
 			perFile << std::endl;
+			scoreFile << n << "," << mean << "," << max << std::endl;
 			scores.clear();
 			maxtile.clear();
 		}
@@ -855,7 +860,7 @@ int main(int argc, const char* argv[]) {
 
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 100000;
+	size_t total = 500000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
@@ -872,9 +877,7 @@ int main(int argc, const char* argv[]) {
 	// restore the model from file
 	tdl.load("");
 
-    // set up the training score file
-    char filename[] = "Results/AfterStateScore.csv";
-    std::fstream scoreFile;
+	//Open the score file and perFile
     scoreFile.open(filename, std::ios::out);
 	perFile.open(perfilename, std::ios::out);
 
@@ -903,7 +906,6 @@ int main(int argc, const char* argv[]) {
 			}
 		}
 		debug << "end episode" << std::endl;
-        scoreFile << n << "," << score << std::endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
