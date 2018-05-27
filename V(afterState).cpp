@@ -874,7 +874,7 @@ int main(int argc, const char* argv[]) {
     scoreFile.open(filename, std::ios::out);
 
 	// set up the training 2048(and above) percentage
-	char perfilename[] = "Results/AfterStatePercentage.csv"
+	char perfilename[] = "Results/AfterStatePercentage.csv";
 	std::fstream perFile;
     perFile.open(perfilename, std::ios::out);
 
