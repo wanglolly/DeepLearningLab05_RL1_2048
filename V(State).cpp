@@ -35,6 +35,10 @@ std::ostream& info = std::cout;
 std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
+// set up the training 2048(and above) percentage
+char perfilename[] = "Results/AfterStatePercentage.csv";
+std::fstream perFile;
+
 /**
  * 64-bit bitboard implementation for 2048
  *
@@ -771,12 +775,18 @@ public:
 			info << "\t" "mean = " << mean;
 			info << "\t" "max = " << max;
 			info << std::endl;
+			perFile << n;
 			for (int t = 1, c = 0; c < unit; c += stat[t++]) {
 				if (stat[t] == 0) continue;
 				int accu = std::accumulate(stat + t, stat + 16, 0);
 				info << "\t" << ((1 << t) & -2u) << "\t" << (accu * coef) << "%";
 				info << "\t(" << (stat[t] * coef) << "%)" << std::endl;
+				//Record the percentage if the score is above 2048
+				if(((1 << t) & -2u) >= 2048){
+					perFile << "," << ((1 << t) & -2u) << "," << (stat[t] * coef);
+				}
 			}
+			perFile << std::endl;
 			scores.clear();
 			maxtile.clear();
 		}
@@ -863,6 +873,7 @@ int main(int argc, const char* argv[]) {
     char filename[] = "Results/StateResult.csv";
     std::fstream scoreFile;
     scoreFile.open(filename, std::ios::out);
+	perFile.open(perfilename, std::ios::out);
 
 	// restore the model from file
 	tdl.load("");
@@ -901,6 +912,7 @@ int main(int argc, const char* argv[]) {
 
 	// store the model into file
 	tdl.save("");
-    scoreFile.close();  
+    scoreFile.close(); 
+	perFile.close(); 
 	return 0;
 }
