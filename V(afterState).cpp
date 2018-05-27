@@ -35,6 +35,11 @@ std::ostream& info = std::cout;
 std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
+// set up the training 2048(and above) percentage
+char perfilename[] = "Results/AfterStatePercentage.csv";
+std::fstream perFile;
+perFile.open(perfilename, std::ios::out);
+
 /**
  * 64-bit bitboard implementation for 2048
  *
@@ -747,7 +752,7 @@ public:
 	 *  '93.7%': 93.7% (937 games) reached 8192-tiles in last 1000 games (a.k.a. win rate of 8192-tile)
 	 *  '22.4%': 22.4% (224 games) terminated with 8192-tiles (the largest) in last 1000 games
 	 */
-	void make_statistic(size_t n, const board& b, int score, std::fstream fp, int unit = 1000) {
+	void make_statistic(size_t n, const board& b, int score, int unit = 1000) {
 		scores.push_back(score);
 		maxtile.push_back(0);
 		for (int i = 0; i < 16; i++) {
@@ -771,7 +776,7 @@ public:
 			info << "\t" "mean = " << mean;
 			info << "\t" "max = " << max;
 			info << std::endl;
-			fp << n;
+			perFile << n;
 			for (int t = 1, c = 0; c < unit; c += stat[t++]) {
 				if (stat[t] == 0) continue;
 				int accu = std::accumulate(stat + t, stat + 16, 0);
@@ -779,10 +784,10 @@ public:
 				info << "\t(" << (stat[t] * coef) << "%)" << std::endl;
 				//Record the percentage if the score is above 2048
 				if(((1 << t) & -2u) >= 2048){
-					fp << "," << ((1 << t) & -2u) << "," << (stat[t] * coef);
+					perFile << "," << ((1 << t) & -2u) << "," << (stat[t] * coef);
 				}
 			}
-			fp << std::endl;
+			perFile << std::endl;
 			scores.clear();
 			maxtile.clear();
 		}
@@ -873,11 +878,6 @@ int main(int argc, const char* argv[]) {
     std::fstream scoreFile;
     scoreFile.open(filename, std::ios::out);
 
-	// set up the training 2048(and above) percentage
-	char perfilename[] = "Results/AfterStatePercentage.csv";
-	std::fstream perFile;
-    perFile.open(perfilename, std::ios::out);
-
 	// train the model
 	std::vector<state> path;
 	path.reserve(20000);
@@ -906,12 +906,13 @@ int main(int argc, const char* argv[]) {
         scoreFile << n << "," << score << std::endl;
 		// update by TD(0)
 		tdl.update_episode(path, alpha);
-		tdl.make_statistic(n, b, score, perFile);
+		tdl.make_statistic(n, b, score);
 		path.clear();
 	}
 
 	// store the model into file
 	tdl.save("");
     scoreFile.close();
+	perFile.close();
 	return 0;
 }
