@@ -38,7 +38,6 @@ std::ostream& debug = *(new std::ofstream);
 // set up the training 2048(and above) percentage
 char perfilename[] = "Results/AfterStatePercentage.csv";
 std::fstream perFile;
-perFile.open(perfilename, std::ios::out);
 
 /**
  * 64-bit bitboard implementation for 2048
@@ -877,6 +876,7 @@ int main(int argc, const char* argv[]) {
     char filename[] = "Results/AfterStateScore.csv";
     std::fstream scoreFile;
     scoreFile.open(filename, std::ios::out);
+	perFile.open(perfilename, std::ios::out);
 
 	// train the model
 	std::vector<state> path;
