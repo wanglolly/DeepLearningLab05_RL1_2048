@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-row = 100000
+row = 500
 filename = 'Results/AfterStateScore.csv'
 
 def read_table(file):
@@ -26,7 +26,7 @@ plt.plot(range(row), col1, label= 'AfterState Reward')
 plt.legend()
 #plt.yscale('log')
 #plt.ylim([0., 100])
-plt.xlabel("episode")
+plt.xlabel("episode(k)")
 plt.ylabel('Reward')
 plt.savefig('Results/AfterStateReward.png', dpi=400, bbox_inches='tight')
 plt.close()

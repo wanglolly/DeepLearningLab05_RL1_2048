@@ -188,6 +188,17 @@ public:
 	}
 
 	/**
+	 * return the "space" index of the board
+	 */
+	std::vector<int> getSpaceTile(){
+		std::vector<int> space;
+		for (int i = 0; i < 16; i++)
+			if (at(i) == 0) {
+				space.push_back(i);
+			}
+		return space;
+	}  
+	/**
 	 * apply an action to the board
 	 * return the reward gained by the action, or -1 if the action is illegal
 	 */
@@ -700,7 +711,17 @@ public:
 		state* best = after;
 		for (state* move = after; move != after + 4; move++) {
 			if (move->assign(b)) {
-				move->set_value(move->reward() + estimate(move->after_state()));
+				std::vector<int> space = move->after_state().getSpaceTile();
+				float estimateValue = 0;
+				for(int i = 0 ; i < space.size() ; i++){
+					board newAfter = move->after_state();
+					newAfter.set(space[i], 1);
+					estimateValue += 0.9 * estimate(newAfter) / space.size();
+					newAfter = move->after_state();
+					newAfter.set(space[i], 2);
+					estimateValue += 0.1 * estimate(newAfter) / space.size();
+				}
+				move->set_value(move->reward() + estimateValue);
 				if (move->value() > best->value())
 					best = move;
 			} else {
@@ -729,9 +750,10 @@ public:
 		float exact = 0;
 		for (path.pop_back() /* terminal state */; path.size(); path.pop_back()) {
 			state& move = path.back();
-			float error = exact - (move.value() - move.reward());
+			exact += move.reward();
+			float error = exact - estimate(move.before_state());
 			debug << "update error = " << error << " for after state" << std::endl << move.after_state();
-			exact = move.reward() + update(move.after_state(), alpha * error);
+			exact = update(move.before_state(), alpha * error);
 		}
 	}
 

@@ -35,13 +35,6 @@ std::ostream& info = std::cout;
 std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
-// set up the training 2048(and above) percentage
-char perfilename[] = "Results/AfterStatePercentage.csv";
-std::fstream perFile;
-// set up the training score file
-char filename[] = "Results/AfterStateScore.csv";
-std::fstream scoreFile;
-
 /**
  * 64-bit bitboard implementation for 2048
  *
@@ -187,6 +180,17 @@ public:
 			set(space[rand() % num], rand() % 10 ? 1 : 2);
 	}
 
+	/**
+	 * return the "space" index of the board
+	 */
+	std::vector<int> getSpaceTile(){
+		std::vector<int> space;
+		for (int i = 0; i < 16; i++)
+			if (at(i) == 0) {
+				space.push_back(i);
+			}
+		return space;
+	}  
 	/**
 	 * apply an action to the board
 	 * return the reward gained by the action, or -1 if the action is illegal
@@ -700,7 +704,17 @@ public:
 		state* best = after;
 		for (state* move = after; move != after + 4; move++) {
 			if (move->assign(b)) {
-				move->set_value(move->reward() + estimate(move->after_state()));
+				std::vector<int> space = move->after_state().getSpaceTile();
+				float estimateValue = 0;
+				for(int i = 0 ; i < space.size() ; i++){
+					board newAfter = move->after_state();
+					newAfter.set(space[i], 1);
+					estimateValue += 0.9 * estimate(newAfter) / space.size();
+					newAfter = move->after_state();
+					newAfter.set(space[i], 2);
+					estimateValue += 0.1 * estimate(newAfter) / space.size();
+				}
+				move->set_value(move->reward() + estimateValue);
 				if (move->value() > best->value())
 					best = move;
 			} else {
@@ -729,11 +743,10 @@ public:
 		float exact = 0;
 		for (path.pop_back() /* terminal state */; path.size(); path.pop_back()) {
 			state& move = path.back();
-			//move.value(): reward + estimate(afterState)
-			//exact : rnext + V(s'next)
-			float error = exact - (move.value() - move.reward());
+			exact += move.reward();
+			float error = exact - estimate(move.before_state());
 			debug << "update error = " << error << " for after state" << std::endl << move.after_state();
-			exact = move.reward() + update(move.after_state(), alpha * error);
+			exact = update(move.before_state(), alpha * error);
 		}
 	}
 
@@ -780,19 +793,12 @@ public:
 			info << "\t" "mean = " << mean;
 			info << "\t" "max = " << max;
 			info << std::endl;
-			perFile << n;
 			for (int t = 1, c = 0; c < unit; c += stat[t++]) {
 				if (stat[t] == 0) continue;
 				int accu = std::accumulate(stat + t, stat + 16, 0);
 				info << "\t" << ((1 << t) & -2u) << "\t" << (accu * coef) << "%";
 				info << "\t(" << (stat[t] * coef) << "%)" << std::endl;
-				//Record the percentage if the score is above 2048
-				if(((1 << t) & -2u) >= 2048){
-					perFile << "," << ((1 << t) & -2u) << "," << (stat[t] * coef);
-				}
 			}
-			perFile << std::endl;
-			scoreFile << n << "," << mean << "," << max << std::endl;
 			scores.clear();
 			maxtile.clear();
 		}
@@ -861,7 +867,7 @@ int main(int argc, const char* argv[]) {
 
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 500000;
+	size_t total = 1000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
@@ -876,11 +882,7 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
 	// restore the model from file
-	tdl.load("Models/AfterStateModel.tar");
-
-	//Open the score file and perFile
-    scoreFile.open(filename, std::ios::out);
-	perFile.open(perfilename, std::ios::out);
+	tdl.load("Models/TDStateModel.tar");
 
 	// train the model
 	std::vector<state> path;
@@ -911,13 +913,6 @@ int main(int argc, const char* argv[]) {
 		tdl.update_episode(path, alpha);
 		tdl.make_statistic(n, b, score);
 		path.clear();
-
-		if(n % 100000 == 0) alpha = alpha * 0.5;
 	}
-
-	// store the model into file
-	tdl.save("Models/AfterStateModel.tar");
-    scoreFile.close();
-	perFile.close();
 	return 0;
 }
