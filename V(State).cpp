@@ -896,16 +896,16 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
     
-    scoreFile.open((filename + std::to_string(60000) + ".csv").c_str(), std::ios::out);
-	perFile.open((perfilename + std::to_string(60000) + ".csv").c_str(), std::ios::out);
+    scoreFile.open((filename + std::to_string(80000) + ".csv").c_str(), std::ios::out);
+	perFile.open((perfilename + std::to_string(80000) + ".csv").c_str(), std::ios::out);
 
 	// restore the model from file
-	tdl.load("Models/TDStateModel60000.tar");
+	tdl.load("Models/TDStateModel80000.tar");
 
 	// train the model
 	std::vector<state> path;
 	path.reserve(20000);
-	for (size_t n = 60001; n <= total; n++) {
+	for (size_t n = 80001; n <= total; n++) {
 		board b;
 		int score = 0;
 
