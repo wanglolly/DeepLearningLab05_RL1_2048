@@ -905,7 +905,7 @@ int main(int argc, const char* argv[]) {
 	// train the model
 	std::vector<state> path;
 	path.reserve(20000);
-	for (size_t n = 30000; n <= total; n++) {
+	for (size_t n = 30001; n <= total; n++) {
 		board b;
 		int score = 0;
 
