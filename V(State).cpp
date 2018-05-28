@@ -36,10 +36,10 @@ std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
 // set up the training 2048(and above) percentage
-char perfilename[] = "Results/TDStatePercentage";
+string perfilename = "Results/TDStatePercentage";
 std::fstream perFile;
 // set up the training score file
-char filename[] = "Results/TDStateScore";
+string filename = "Results/TDStateScore";
 std::fstream scoreFile;
 
 /**
@@ -896,8 +896,8 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
     
-    scoreFile.open(filename + ".csv", std::ios::out);
-	perFile.open(perfilename + ".csv", std::ios::out);
+    scoreFile.open((filename + ".csv").c_str(), std::ios::out);
+	perFile.open((perfilename + ".csv").c_str(), std::ios::out);
 
 	// restore the model from file
 	tdl.load("");
@@ -935,8 +935,8 @@ int main(int argc, const char* argv[]) {
 			tdl.save("Models/TDStateModel" + n + ".tar");
 			scoreFile.close(); 
 			perFile.close(); 
-			scoreFile.open(filename + n + ".csv", std::ios::out);
-			perFile.open(perfilename + n + ".csv", std::ios::out);
+			scoreFile.open((filename + n + ".csv").c_str(), std::ios::out);
+			perFile.open((perfilename + n + ".csv").c_str(), std::ios::out);
 		}
 			
 	}
