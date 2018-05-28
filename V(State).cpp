@@ -935,8 +935,8 @@ int main(int argc, const char* argv[]) {
 			tdl.save("Models/TDStateModel" + n + ".tar");
 			scoreFile.close(); 
 			perFile.close(); 
-			scoreFile.open((filename + n + ".csv").c_str(), std::ios::out);
-			perFile.open((perfilename + n + ".csv").c_str(), std::ios::out);
+			scoreFile.open((filename + std::to_string(n) + ".csv").c_str(), std::ios::out);
+			perFile.open((perfilename + std::to_string(n) + ".csv").c_str(), std::ios::out);
 		}
 			
 	}
