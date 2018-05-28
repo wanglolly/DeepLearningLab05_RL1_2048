@@ -900,12 +900,12 @@ int main(int argc, const char* argv[]) {
 	perFile.open((perfilename + ".csv").c_str(), std::ios::out);
 
 	// restore the model from file
-	tdl.load("");
+	tdl.load("Models/TDStateModel20000.tar");
 
 	// train the model
 	std::vector<state> path;
 	path.reserve(20000);
-	for (size_t n = 1; n <= total; n++) {
+	for (size_t n = 20000; n <= total; n++) {
 		board b;
 		int score = 0;
 
