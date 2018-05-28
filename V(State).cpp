@@ -932,7 +932,7 @@ int main(int argc, const char* argv[]) {
 		tdl.make_statistic(n, b, score);
 		path.clear();
 		if(n % 10000 == 0){
-			tdl.save("Models/TDStateModel" + n + ".tar");
+			tdl.save("Models/TDStateModel" + std::to_string(n) + ".tar");
 			scoreFile.close(); 
 			perFile.close(); 
 			scoreFile.open((filename + std::to_string(n) + ".csv").c_str(), std::ios::out);
