@@ -36,10 +36,10 @@ std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
 // set up the training 2048(and above) percentage
-string perfilename = "Results/TDStatePercentage";
+std::string perfilename = "Results/TDStatePercentage";
 std::fstream perFile;
 // set up the training score file
-string filename = "Results/TDStateScore";
+std::string filename = "Results/TDStateScore";
 std::fstream scoreFile;
 
 /**
