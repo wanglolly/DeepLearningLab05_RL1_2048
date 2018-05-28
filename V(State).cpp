@@ -896,8 +896,8 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
     
-    scoreFile.open((filename + ".csv").c_str(), std::ios::out);
-	perFile.open((perfilename + ".csv").c_str(), std::ios::out);
+    scoreFile.open((filename + std::to_string(30000) + ".csv").c_str(), std::ios::out);
+	perFile.open((perfilename + std::to_string(30000) + ".csv").c_str(), std::ios::out);
 
 	// restore the model from file
 	tdl.load("Models/TDStateModel30000.tar");
