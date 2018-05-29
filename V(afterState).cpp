@@ -876,7 +876,7 @@ int main(int argc, const char* argv[]) {
 	tdl.add_feature(new pattern({ 4, 5, 6, 8, 9, 10 }));
 
 	// restore the model from file
-	tdl.load("Models/AfterStateModel.tar");
+	tdl.load("");
 
 	//Open the score file and perFile
     scoreFile.open(filename, std::ios::out);
