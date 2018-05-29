@@ -36,10 +36,10 @@ std::ostream& error = std::cerr;
 std::ostream& debug = *(new std::ofstream);
 
 // set up the training 2048(and above) percentage
-char perfilename[] = "Results/AfterStatePercentage.csv";
+char perfilename[] = "Results/AfterStatePercentage100k.csv";
 std::fstream perFile;
 // set up the training score file
-char filename[] = "Results/AfterStateScore.csv";
+char filename[] = "Results/AfterStateScore100k.csv";
 std::fstream scoreFile;
 
 /**

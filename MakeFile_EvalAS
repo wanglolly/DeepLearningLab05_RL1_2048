@@ -1,4 +1,4 @@
 all:
-	g++ -std=c++0x -O3 -g -Wall -fmessage-length=0 -o 2048_eval_afterState afterState_eval.cpp 
+	g++ -std=c++0x -O3 -g -Wall -fmessage-length=0 -o 2048_eval_afterState_100k afterState_eval.cpp 
 clean:
-	rm 2048_eval_afterState
+	rm 2048_eval_afterState_100k
