@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-row = 500
+row = 100
 filename = 'Results/AfterStateScore.csv'
 
 def read_table(file):
@@ -22,7 +22,7 @@ table = read_table(open(filename, 'r'))
 col1 = get_train_loss(table, 1)
 #Plot the training loss
 plt.subplots()
-plt.plot(range(row), col1, label= 'AfterState Reward')
+plt.plot(range(row), col1, label= 'V(after-state) Reward')
 plt.legend()
 #plt.yscale('log')
 #plt.ylim([0., 100])
