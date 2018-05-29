@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 
 row = 100
-filename = 'Results/AfterStateScore.csv'
+filename = 'Results/AfterStateScore100k.csv'
 
 def read_table(file):
     dta = []

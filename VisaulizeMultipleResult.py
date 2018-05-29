@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 
 row = 100
-filename = 'Results/TDStatePercentage.csv'
+filename = 'Results/AfterStatePercentage100k.csv'
 
 def read_table(file):
     dta = []
@@ -15,7 +15,7 @@ def read_table(file):
 def get_train_loss(dta, col):
     loss = []
     for r in range(dta.shape[0]):
-        if len(dta[r][col]) > 1:
+        if len(dta[r]) > col:
             loss.append(float(dta[r][col]))
         else:
             loss.append(0)
